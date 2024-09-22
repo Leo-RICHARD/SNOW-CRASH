@@ -1,0 +1,40 @@
+ls gives nothing
+
+you're not allowed to write anywhere but /tmp
+
+which getflag
+ /bin/getflag
+
+strings /bin/getflag
+ [...]
+ GLIBC_2.0
+ PTRh@
+ QVhF
+ UWVS
+ [^_]
+ 0123456
+ You should not reverse this <== maybe reverse this later
+ LD_PRELOAD
+ Injection Linked lib detected exit..
+ /etc/ld.so.preload
+ /proc/self/maps
+ [...]
+
+find / -user flag00 -printf "%M %u %g %p\n" 2>/dev/null | grep -v proc
+ ----r--r-- flag00 flag00 /usr/sbin/john
+ ----r--r-- flag00 flag00 /rofs/usr/sbin/john
+
+cat /usr/sbin/john
+ cdiiddwpgswtgt
+
+cat /rofs/usr/sbin/john
+ cdiiddwpgswtgt
+
+turns out it's caesar cipher, each letter is shifted by 11
+translation gives "nottoohardhere"
+
+su flag00
+ password: nottoohardhere
+
+getflag
+ Check flag.Here is your token : x24ti5gi3x0ol2eh4esiuxias

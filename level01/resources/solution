@@ -1,0 +1,21 @@
+cat /etc/passwd
+ [...]
+ level14:x:2014:2014::/home/user/level14:/bin/bash
+ flag00:x:3000:3000::/home/flag/flag00:/bin/bash
+ flag01:42hDRfypTqqnw:3001:3001::/home/flag/flag01:/bin/bash <== flag01's password hash visible
+ flag02:x:3002:3002::/home/flag/flag02:/bin/bash
+ flag03:x:3003:3003::/home/flag/flag03:/bin/bash
+ [...]
+
+echo 42hDRfypTqqnw > hash
+
+john -show hash
+ ?:abcdefg
+
+?: indicates incorrect hash formatting, password is abcdefg
+
+su flag01
+ password: abcdefg
+
+getflag
+ Check flag.Here is your token : f2av5il02puano7naaf6adaaf

